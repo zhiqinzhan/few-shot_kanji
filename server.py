@@ -92,6 +92,6 @@ def get_predefined_font_list():
     return {"token_list": ["WangXiZhi"]}
 
 
-@app.route("/output/<filename>", methods=["GET"])
+@app.route("/output/<path:filename>", methods=["GET"])
 def output_file(filename):
     return send_from_directory(app.config["OUTPUT_PATH"], filename)
