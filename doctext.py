@@ -8,13 +8,7 @@ from google.cloud.vision import types
 from PIL import Image, ImageDraw
 import cv2
 
-
-class FeatureType(Enum):
-    PAGE = 1
-    BLOCK = 2
-    PARA = 3
-    WORD = 4
-    SYMBOL = 5
+from binarize import binarize
 
 
 def draw_boxes(image, bounds, color):
@@ -39,7 +33,7 @@ def draw_boxes(image, bounds, color):
     return image
 
 
-def get_document_bounds(image_file, feature):
+def get_document_bounds(image_file):
     """Returns document bounds given an image."""
     client = vision.ImageAnnotatorClient()
 
@@ -60,28 +54,15 @@ def get_document_bounds(image_file, feature):
             for paragraph in block.paragraphs:
                 for word in paragraph.words:
                     for symbol in word.symbols:
-                        if feature == FeatureType.SYMBOL:
-                            bounds.append(symbol.bounding_box)
-                            text.append(symbol.text)
-
-                    if feature == FeatureType.WORD:
-                        bounds.append(word.bounding_box)
-                        text.append(word.text)
-
-                if feature == FeatureType.PARA:
-                    bounds.append(paragraph.bounding_box)
-                    text.append(paragraph.text)
-
-            if feature == FeatureType.BLOCK:
-                bounds.append(block.bounding_box)
-                text.append(block.text)
+                        bounds.append(symbol.bounding_box)
+                        text.append(symbol.text)
 
     # The list `bounds` contains the coordinates of the bounding boxes.
     return bounds, text
 
 
-def render_doc_text(file_in, path_out, feature):
-    bounds, text = get_document_bounds(file_in, feature)
+def render_doc_text(file_in, path_out):
+    bounds, text = get_document_bounds(file_in)
 
     image = Image.open(file_in)
     draw_boxes(image, bounds, "red")
@@ -89,9 +70,12 @@ def render_doc_text(file_in, path_out, feature):
 
     img = cv2.imread(file_in)
     for bound, t in zip(bounds, text):
-        print(bound)
-        print(t)
-        print("!!!")
+        min_x = min(v.x for v in bound.vertices)
+        min_y = min(v.y for v in bound.vertices)
+        max_x = max(v.x for v in bound.vertices)
+        max_y = max(v.y for v in bound.vertices)
+        crop = img[min_x:max_x, min_y:max_y]
+        cv2.imwrite(os.path.join(path_out, "{}.jpg".format(t)), crop)
 
 
 if __name__ == "__main__":
@@ -100,4 +84,4 @@ if __name__ == "__main__":
     parser.add_argument("out_path", help="Output path")
     args = parser.parse_args()
 
-    render_doc_text(args.detect_file, args.out_path, FeatureType.SYMBOL)
+    render_doc_text(args.detect_file, args.out_path)
