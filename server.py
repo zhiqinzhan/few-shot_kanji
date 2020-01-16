@@ -4,6 +4,8 @@ import secrets
 from flask import Flask, request, abort, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
+from pre_process import is_kanji
+
 app = Flask(__name__)
 
 app.config.update(
@@ -53,7 +55,11 @@ def get_char_img_list():
         if token is None or query_string is None:
             abort(400)
 
-        if len(query_string) > app.config["MAX_QUERY_LENGTH"]:
+        query_string = "".join(filter(is_kanji, query_string))
+        if (
+            not query_string.strip()
+            or len(query_string) > app.config["MAX_QUERY_LENGTH"]
+        ):
             abort(400)
 
         token = secure_filename(token)
