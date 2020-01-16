@@ -62,6 +62,11 @@ def get_document_bounds(image_file):
 
 
 def render_doc_text(file_in, path_out):
+    img = cv2.imread(file_in)
+    img = binarize(img)
+    file_in = os.path.join(path_out, "binarized.jpg")
+    cv2.imwrite(file_in, img)
+
     bounds, text = get_document_bounds(file_in)
 
     image = Image.open(file_in)
