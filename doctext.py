@@ -8,7 +8,7 @@ from google.cloud.vision import types
 from PIL import Image, ImageDraw
 import cv2
 
-from binarize import binarize
+from pre_process import binarize
 
 
 def draw_boxes(image, bounds, color):
