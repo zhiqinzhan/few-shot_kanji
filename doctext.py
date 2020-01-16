@@ -69,6 +69,8 @@ def render_doc_text(file_in, path_out):
     image.save(os.path.join(path_out, "rendered.jpg"))
 
     img = cv2.imread(file_in)
+    crop_path = os.path.join(path_out, "crop")
+    os.mkdir(crop_path)
     for bound, t in zip(bounds, text):
         min_x = min(v.x for v in bound.vertices)
         min_y = min(v.y for v in bound.vertices)
@@ -76,7 +78,7 @@ def render_doc_text(file_in, path_out):
         max_y = max(v.y for v in bound.vertices)
         crop = img[min_y:max_y, min_x:max_x]
         crop = binarize(crop)
-        cv2.imwrite(os.path.join(path_out, "crop", "{}.jpg".format(t)), crop)
+        cv2.imwrite(os.path.join(crop_path, "{}.jpg".format(t)), crop)
 
 
 if __name__ == "__main__":

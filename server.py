@@ -5,6 +5,7 @@ from flask import Flask, request, abort, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
 from pre_process import is_kanji
+from doctext import render_doc_text
 
 app = Flask(__name__)
 
@@ -32,7 +33,12 @@ def new_font():
 
         token = secrets.token_hex(app.config["TOKEN_LENGTH"])
         filename = "{}.{}".format(token, img_format)
-        img.save(os.path.join(app.config["INPUT_PATH"], filename))
+        file_path = os.path.join(app.config["INPUT_PATH"], filename)
+        img.save(file_path)
+
+        out_path = os.path.join(app.config["OUTPUT_PATH"], token)
+        os.mkdir(out_path)
+        render_doc_text(file_path, out_path)
 
         return {"token": token}
 
@@ -63,14 +69,8 @@ def get_char_img_list():
             abort(400)
 
         token = secure_filename(token)
-        file_path = None
-        for img_format in app.config["ALLOWED_IMG_FORMATS"]:
-            filename = "{}.{}".format(token, img_format)
-            fp_t = os.path.join(app.config["INPUT_PATH"], filename)
-            if os.path.isfile(fp_t):
-                file_path = fp_t
-                break
-        if file_path is None:
+        out_path = os.path.join(app.config["OUTPUT_PATH"], token)
+        if not os.path.isdir(out_path):
             abort(404)
 
         return {"img_url_list": [url_for("output_file", filename="test.png")]}
