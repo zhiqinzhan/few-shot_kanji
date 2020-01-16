@@ -75,6 +75,9 @@ def render_doc_text(file_in, path_out):
         max_x = max(v.x for v in bound.vertices)
         max_y = max(v.y for v in bound.vertices)
         crop = img[min_x:max_x, min_y:max_y]
+        print(min_x, max_x, min_y, max_y)
+        print(img.shape)
+        print(crop.shape)
         cv2.imwrite(os.path.join(path_out, "{}.jpg".format(t)), crop)
 
 
