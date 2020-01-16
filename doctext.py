@@ -62,11 +62,6 @@ def get_document_bounds(image_file):
 
 
 def render_doc_text(file_in, path_out):
-    img = cv2.imread(file_in)
-    img = binarize(img)
-    file_in = os.path.join(path_out, "binarized.jpg")
-    cv2.imwrite(file_in, img)
-
     bounds, text = get_document_bounds(file_in)
 
     image = Image.open(file_in)
@@ -81,7 +76,7 @@ def render_doc_text(file_in, path_out):
         max_y = max(v.y for v in bound.vertices)
         crop = img[min_y:max_y, min_x:max_x]
         crop = binarize(crop)
-        cv2.imwrite(os.path.join(path_out, "{}.jpg".format(t)), crop)
+        cv2.imwrite(os.path.join(path_out, "crop", "{}.jpg".format(t)), crop)
 
 
 if __name__ == "__main__":
