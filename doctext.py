@@ -74,7 +74,7 @@ def render_doc_text(file_in, path_out):
         min_y = min(v.y for v in bound.vertices)
         max_x = max(v.x for v in bound.vertices)
         max_y = max(v.y for v in bound.vertices)
-        crop = img[min_x:max_x, min_y:max_y]
+        crop = img[min_y:max_y, min_x:max_x]
         print(min_x, max_x, min_y, max_y)
         print(img.shape)
         print(crop.shape)
