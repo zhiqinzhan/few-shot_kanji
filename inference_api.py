@@ -202,6 +202,8 @@ def test_with_specified_chars(
 ):
     out_fake_imgs = []
     real_imgs = []
+    out_names = []
+
     for char in char_list:
         true_inferencer.transfer_imgs(style_idx, char)
         # import pdb; pdb.set_trace()
@@ -215,10 +217,10 @@ def test_with_specified_chars(
         except:
             pass
         for i, img in enumerate(out_fake_imgs):
-            true_inferencer.save_img(
-                img, "{}_style_{}_infered_{}.png".format(prefix, style_idx, i)
-            )
-        return
+            out_name = "infered_{}.png".format(i)
+            out_names.append(out_name)
+            true_inferencer.save_img(img, os.path.join(prefix, out_name))
+        return out_names
 
     if direction == "vertical":
         out_img = torch.cat(out_fake_imgs, dim=2)
@@ -230,7 +232,7 @@ def test_with_specified_chars(
     )
 
 
-if __name__ == "__main__":
+if True:
     true_inferencer = Inferener(opt)
 
     # """"
@@ -247,6 +249,14 @@ if __name__ == "__main__":
 
     true_inferencer.add_new_cats(img_readed, style_key="WangXiZhi")
 
+    pre_defined_style_key = [str(i) for i in range(57)].append("WangXiZhi")
+    for key in pre_defined_style_key:
+        try:
+            os.makedirs("./output/{}", key)
+        except:
+            pass
+
+if __name__ == "__main__":
     """Generate specific Characters
     """
     test_with_specified_chars(

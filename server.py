@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 
 from pre_process import is_kanji
 from doctext import render_doc_text
+from inference_api import test_with_specified_chars, pre_defined_style_key
 
 app = Flask(__name__)
 
@@ -73,7 +74,22 @@ def get_char_img_list():
         if not os.path.isdir(out_path):
             abort(404)
 
-        return {"img_url_list": [url_for("output_file", filename="test.png")]}
+        if token not in pre_defined_style_key:
+            pass
+
+        token_infer = secrets.token_hex(app.config["TOKEN_LENGTH"])
+        out_names = test_with_specified_chars(
+            style_idx=token,
+            char_list=query_string,
+            direction=None,
+            prefix=os.path.join(out_path, token_infer),
+        )
+        img_url_list = [
+            url_for("output_file", filename=os.path.join(token_infer, out_name))
+            for out_name in out_names
+        ]
+
+        return {"img_url_list": img_url_list}
 
     return """
     <!doctype html>
