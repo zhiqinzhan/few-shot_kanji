@@ -210,6 +210,10 @@ def test_with_specified_chars(
         real_imgs.append(true_inferencer.src_img)
 
     if direction is None:
+        try:
+            os.mkdirs(prefix)
+        except:
+            pass
         for i, img in enumerate(out_fake_imgs):
             true_inferencer.save_img(
                 img, "{}_style_{}_infered_{}.png".format(prefix, style_idx, i)
