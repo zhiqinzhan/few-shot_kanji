@@ -211,7 +211,7 @@ def test_with_specified_chars(
 
     if direction is None:
         try:
-            os.mkdirs(prefix)
+            os.makedirs(prefix)
         except:
             pass
         for i, img in enumerate(out_fake_imgs):
