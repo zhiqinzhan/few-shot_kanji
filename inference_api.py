@@ -198,22 +198,23 @@ class Inferener(object):
 # char_list = ['敬']
 # char_list = ['谷歌机器学习冬令营']
 def test_with_specified_chars(
-    style_idx=0, char_list="谷歌机器学习冬令营", direction="horizontal", prefix=""
+    style_idx="0", char_list="谷歌机器学习冬令营", direction=None, prefix=""
 ):
-
-    # style_idx = 0
-
     out_fake_imgs = []
     real_imgs = []
     for char in char_list:
-        # out_img =
-        true_inferencer.transfer_imgs(style_idx, char)  # , save=True)
+        true_inferencer.transfer_imgs(style_idx, char)
         # import pdb; pdb.set_trace()
 
         out_fake_imgs.append(true_inferencer.model.fake_B)
         real_imgs.append(true_inferencer.src_img)
 
-    # direction = 'horizontal' # horizontal
+    if direction is None:
+        for i, img in enumerate(out_fake_imgs):
+            true_inferencer.save_img(
+                img, "{}_style_{}_infered_{}.png".format(prefix, style_idx, i)
+            )
+        return
 
     if direction == "vertical":
         out_img = torch.cat(out_fake_imgs, dim=2)
@@ -247,12 +248,9 @@ if __name__ == "__main__":
     test_with_specified_chars(
         "WangXiZhi",
         char_list="谷歌机器学习冬令营",
-        prefix="/home/zhiqinzhan1995/duilian_shang_wangxizi",
+        prefix="/home/zhiqinzhan1995/duilian_shang_wangxizi/",
     )
 
-    import pdb
-
-    pdb.set_trace()
     # char_list = '人丑无怨屏幕轻闪码上有对象'
     # import pdb; pdb.set_trace()
     # for i in tqdm(range(57)):
