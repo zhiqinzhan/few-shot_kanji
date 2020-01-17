@@ -3,10 +3,15 @@ import imghdr
 import secrets
 from flask import Flask, request, abort, send_from_directory, url_for
 from werkzeug.utils import secure_filename
+from PIL import Image
 
 from pre_process import is_kanji
 from doctext import render_doc_text
-from inference_api import test_with_specified_chars, pre_defined_style_key
+from inference_api import (
+    test_with_specified_chars,
+    pre_defined_style_key,
+    true_inferencer,
+)
 
 app = Flask(__name__)
 
@@ -39,7 +44,13 @@ def new_font():
 
         out_path = os.path.join(app.config["OUTPUT_PATH"], token)
         os.mkdir(out_path)
-        render_doc_text(file_path, out_path)
+        crop_path = render_doc_text(file_path, out_path)
+
+        crop_imgs = os.listdir(crop_path)
+        crop_imgs = [item for item in crop_imgs if ".jpg" in item]
+        img_paths = [os.path.join(crop_path, item) for item in crop_imgs]
+        img_readed = [Image.open(item).convert("RGB") for item in img_paths]
+        true_inferencer.add_new_cats(img_readed, style_key=token)
 
         return {"token": token}
 
@@ -112,5 +123,7 @@ def get_predefined_font_list():
 def output_file(filename):
     return send_from_directory(app.config["OUTPUT_PATH"], filename)
 
-if __name__ == '__main__':
-        app.run(host="0.0.0.0", port=80)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
+
