@@ -85,11 +85,11 @@ def get_char_img_list():
             prefix=os.path.join(out_path, token_infer),
         )
         img_url_list = [
-            url_for("output_file", filename=os.path.join(token_infer, out_name))
+            url_for("output_file", filename=os.path.join(token, token_infer, out_name))
             for out_name in out_names
         ]
 
-        return {"img_url_list": img_url_list}
+        return {"img_url_list": img_url_list, "kanji_string": query_string}
 
     return """
     <!doctype html>
@@ -111,3 +111,6 @@ def get_predefined_font_list():
 @app.route("/output/<path:filename>", methods=["GET"])
 def output_file(filename):
     return send_from_directory(app.config["OUTPUT_PATH"], filename)
+
+if __name__ == '__main__':
+        app.run(host="0.0.0.0", port=80)
