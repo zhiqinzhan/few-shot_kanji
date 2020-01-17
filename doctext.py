@@ -72,7 +72,7 @@ def render_doc_text(file_in, path_out):
     crop_path = os.path.join(path_out, "crop")
     os.mkdir(crop_path)
     for bound, t in zip(bounds, text):
-        if is_kanji(text):
+        if is_kanji(t):
             min_x = min(v.x for v in bound.vertices)
             min_y = min(v.y for v in bound.vertices)
             max_x = max(v.x for v in bound.vertices)
