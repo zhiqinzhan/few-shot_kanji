@@ -219,7 +219,13 @@ def test_with_specified_chars(
         for i, img in enumerate(out_fake_imgs):
             out_name = "infered_{}.png".format(i)
             out_names.append(out_name)
-            true_inferencer.save_img(img, os.path.join(prefix, out_name))
+            out_path = os.path.join(prefix, out_name)
+            true_inferencer.save_img(img, out_path)
+            from pre_process import binarize
+            import cv2
+            img = cv2.imread(out_path)
+            img = binarize(img)
+            cv2.imwrite(out_path, img)
         return out_names
 
     if direction == "vertical":
@@ -249,12 +255,13 @@ if True:
 
     true_inferencer.add_new_cats(img_readed, style_key="WangXiZhi")
 
-    pre_defined_style_key = [str(i) for i in range(57)].append("WangXiZhi")
+    pre_defined_style_key = [str(i) for i in range(57)]
+    pre_defined_style_key.append("WangXiZhi")
     for key in pre_defined_style_key:
         try:
-            os.makedirs("./output/{}", key)
+            os.makedirs("./output/{}".format(key))
         except:
-            pass
+            print(key)
 
 if __name__ == "__main__":
     """Generate specific Characters
