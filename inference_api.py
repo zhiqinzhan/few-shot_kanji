@@ -19,6 +19,16 @@ import time
 from tqdm import tqdm
 
 opt = InferenceOptions().parse()  # get test options
+opt.model = "font_pix2pix_v2"
+opt.netG = "font_256"
+opt.netD = "fontbasic"
+opt.direction = "BtoA"
+opt.checkpoints_dir = "./save/inference/"
+opt.cat_emb_path = "./ckpt_and_files/mean_fc_feat.pt"
+opt.cls_ckpt = "./ckpt_and_files/model_best.pth.tar"
+opt.ckpt_path = "./ckpt_and_files/50_net_G.pth"
+opt.gpu_ids = 0
+
 # hard-code some parameters for test
 opt.num_threads = 0  # test code only supports num_threads = 1
 opt.batch_size = 1  # test code only supports batch_size = 1
@@ -218,13 +228,10 @@ def test_with_specified_chars(
 if __name__ == "__main__":
     true_inferencer = Inferener(opt)
 
-    import pdb
-
-    pdb.set_trace()
     # """"
     # Add new font style
     # """"
-    folder = "../datasets/Calligraphy_Processed/"
+    folder = "../Calligraphy_Processed/"
 
     wangxizi_imgs = os.listdir(folder)
     wangxizi_imgs = [item for item in wangxizi_imgs if ".jpg" in item]
@@ -233,12 +240,14 @@ if __name__ == "__main__":
 
     img_readed = [Image.open(item).convert("RGB") for item in img_paths]
 
-    true_inferencer.add_new_cats(img_readed, style_key="user1")
+    true_inferencer.add_new_cats(img_readed, style_key="WangXiZhi")
 
     """Generate specific Characters
     """
     test_with_specified_chars(
-        "user1", char_list="谷歌机器学习冬令营", prefix="duilian_shang_wangxizi"
+        "WangXiZhi",
+        char_list="谷歌机器学习冬令营",
+        prefix="/home/zhiqinzhan1995/duilian_shang_wangxizi",
     )
 
     import pdb
