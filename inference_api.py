@@ -27,7 +27,7 @@ opt.checkpoints_dir = "./save/inference/"
 opt.cat_emb_path = "./ckpt_and_files/mean_fc_feat.pt"
 opt.cls_ckpt = "./ckpt_and_files/model_best.pth.tar"
 opt.ckpt_path = "./ckpt_and_files/50_net_G.pth"
-opt.gpu_ids = 0
+opt.gpu_ids = [0]
 
 # hard-code some parameters for test
 opt.num_threads = 0  # test code only supports num_threads = 1
@@ -138,7 +138,7 @@ class Inferener(object):
         self,
         char_id,
         font="SimSun",
-        font_root="../datasets/font_process/font_ttf",
+        font_root="./ckpt_and_files",
         canvas_size=256,
         char_size=220,
     ):
